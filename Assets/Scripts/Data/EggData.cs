@@ -8,10 +8,12 @@ namespace PetSimLite.Data
     {
         [SerializeField] private string eggId;
         [SerializeField] private int eggCost = 100;
+        [SerializeField] private float rollIntervalSeconds = 0.8f;
         [SerializeField] private DropEntry[] dropTable;
 
         public string EggId => eggId;
         public int EggCost => eggCost;
+        public float RollIntervalSeconds => rollIntervalSeconds;
         public DropEntry[] DropTable => dropTable;
     }
 
