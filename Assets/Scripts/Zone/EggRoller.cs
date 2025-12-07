@@ -22,7 +22,6 @@ namespace PetSimLite.Zone
         public static event Action<EggRollResult> EggRolled;
 
         [SerializeField] private EggData eggData;
-        [SerializeField] private Transform spawnOrigin;
 
         private bool _playerInside;
         private Coroutine _rollRoutine;
@@ -55,6 +54,12 @@ namespace PetSimLite.Zone
                 return;
             }
 
+            _playerInside = false;
+            StopRolling();
+        }
+
+        private void OnDisable()
+        {
             _playerInside = false;
             StopRolling();
         }

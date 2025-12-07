@@ -30,7 +30,6 @@ namespace PetSimLite.Pets
         [SerializeField] private float aggroRadius = 12f;
         [SerializeField] private LayerMask breakableMask = ~0;
 
-        private readonly List<PetData> _ownedPets = new List<PetData>();
         private readonly List<PetAgent> _activeAgents = new List<PetAgent>();
         private readonly HashSet<Breakable> _claimedTargets = new HashSet<Breakable>();
         private readonly List<OwnedPet> _ownedPetInstances = new List<OwnedPet>();

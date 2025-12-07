@@ -1,3 +1,5 @@
+// Debug-only helper for editor playtesting.
+#if UNITY_EDITOR
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -41,3 +43,4 @@ namespace PetSimLite.Resources
         }
     }
 }
+#endif
