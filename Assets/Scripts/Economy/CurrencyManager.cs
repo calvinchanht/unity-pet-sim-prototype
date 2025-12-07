@@ -6,9 +6,11 @@ namespace PetSimLite.Economy
     /// <summary>
     /// Tracks coins, provides add/spend methods, and notifies listeners when the amount changes.
     /// </summary>
+    [DefaultExecutionOrder(-100)]
     public class CurrencyManager : MonoBehaviour
     {
         public static CurrencyManager Instance { get; private set; }
+        public static event Action<CurrencyManager> InstanceInitialized;
 
         [SerializeField] private int startingCoins = 0;
 
@@ -25,6 +27,7 @@ namespace PetSimLite.Economy
 
             Instance = this;
             _coins = startingCoins;
+            InstanceInitialized?.Invoke(this);
             CoinsChanged?.Invoke(_coins);
         }
 

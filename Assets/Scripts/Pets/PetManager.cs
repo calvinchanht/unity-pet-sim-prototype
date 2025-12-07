@@ -12,6 +12,12 @@ namespace PetSimLite.Pets
     /// </summary>
     public class PetManager : MonoBehaviour
     {
+        private struct OwnedPet
+        {
+            public PetData Data;
+            public int InstanceId;
+        }
+
         [Header("References")]
         [SerializeField] private Transform player;
         [SerializeField] private GameObject petPrefab;
@@ -27,6 +33,8 @@ namespace PetSimLite.Pets
         private readonly List<PetData> _ownedPets = new List<PetData>();
         private readonly List<PetAgent> _activeAgents = new List<PetAgent>();
         private readonly HashSet<Breakable> _claimedTargets = new HashSet<Breakable>();
+        private readonly List<OwnedPet> _ownedPetInstances = new List<OwnedPet>();
+        private int _nextInstanceId = 1;
 
         private void OnEnable()
         {
@@ -42,7 +50,7 @@ namespace PetSimLite.Pets
         {
             if (player == null)
             {
-                var pc = FindObjectOfType<PlayerController>();
+                var pc = FindFirstObjectByType<PlayerController>();
                 if (pc != null) player = pc.transform;
             }
         }
@@ -58,28 +66,37 @@ namespace PetSimLite.Pets
         {
             if (result.Pet == null) return;
 
-            _ownedPets.Add(result.Pet);
+            _ownedPetInstances.Add(new OwnedPet
+            {
+                Data = result.Pet,
+                InstanceId = _nextInstanceId++
+            });
             RebuildActivePets();
         }
 
         private void RebuildActivePets()
         {
-            // Sort owned by descending power.
-            _ownedPets.Sort((a, b) => b.BasePower.CompareTo(a.BasePower));
+            // Sort owned by descending power, then by instance id for stable ordering.
+            _ownedPetInstances.Sort((a, b) =>
+            {
+                int powerCompare = b.Data.BasePower.CompareTo(a.Data.BasePower);
+                if (powerCompare != 0) return powerCompare;
+                return a.InstanceId.CompareTo(b.InstanceId);
+            });
 
             // Desired active list (top N).
-            var desired = new HashSet<PetData>();
-            int count = Mathf.Min(maxActivePets, _ownedPets.Count);
+            var desiredIds = new HashSet<int>();
+            int count = Mathf.Min(maxActivePets, _ownedPetInstances.Count);
             for (int i = 0; i < count; i++)
             {
-                desired.Add(_ownedPets[i]);
+                desiredIds.Add(_ownedPetInstances[i].InstanceId);
             }
 
             // Remove agents whose pet is no longer desired.
             for (int i = _activeAgents.Count - 1; i >= 0; i--)
             {
                 var agent = _activeAgents[i];
-                if (agent == null || agent.PetData == null || !desired.Contains(agent.PetData))
+                if (agent == null || !desiredIds.Contains(agent.InstanceId))
                 {
                     if (agent != null)
                     {
@@ -90,28 +107,19 @@ namespace PetSimLite.Pets
             }
 
             // Spawn missing desired pets.
-            for (int i = 0; i < _ownedPets.Count && _activeAgents.Count < maxActivePets; i++)
+            for (int i = 0; i < _ownedPetInstances.Count && _activeAgents.Count < maxActivePets; i++)
             {
-                var pet = _ownedPets[i];
-                bool alreadyActive = false;
-                for (int j = 0; j < _activeAgents.Count; j++)
-                {
-                    if (_activeAgents[j].PetData == pet)
-                    {
-                        alreadyActive = true;
-                        break;
-                    }
-                }
-
+                var petInstance = _ownedPetInstances[i];
+                bool alreadyActive = _activeAgents.Exists(a => a != null && a.InstanceId == petInstance.InstanceId);
                 if (alreadyActive) continue;
 
-                SpawnPet(pet);
+                SpawnPet(petInstance);
             }
         }
 
-        private void SpawnPet(PetData pet)
+        private void SpawnPet(OwnedPet petInstance)
         {
-            if (petPrefab == null || player == null) return;
+            if (petPrefab == null || player == null || petInstance.Data == null) return;
 
             Vector3 offset = Random.insideUnitSphere;
             offset.y = 0f;
@@ -125,7 +133,7 @@ namespace PetSimLite.Pets
                 agent = obj.AddComponent<PetAgent>();
             }
 
-            agent.Initialize(pet, player);
+            agent.Initialize(petInstance.Data, petInstance.InstanceId, player);
             _activeAgents.Add(agent);
         }
 

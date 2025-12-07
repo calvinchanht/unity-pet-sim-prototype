@@ -13,25 +13,34 @@ namespace PetSimLite.Pets
         [SerializeField] private float moveSpeed = 6f;
         [SerializeField] private float followRange = 3f;
         [SerializeField] private float attackRange = 1.5f;
+        [SerializeField] private float followScatterRadius = 2.5f;
+        [SerializeField] private float offsetRefreshInterval = 4f;
 
         [Header("Stats")]
         [SerializeField] private float damagePerSecond = 1f;
 
         public PetData PetData { get; private set; }
+        public int InstanceId { get; private set; }
         public Breakable CurrentTarget { get; private set; }
         public bool IsIdle => CurrentTarget == null;
 
         private Transform _player;
         private float _damageBuffer;
+        private Vector3 _followOffset;
+        private float _offsetRefreshTimer;
 
-        public void Initialize(PetData data, Transform player)
+        public void Initialize(PetData data, int instanceId, Transform player)
         {
             PetData = data;
+            InstanceId = instanceId;
             _player = player;
             if (data != null)
             {
                 damagePerSecond = Mathf.Max(0.1f, data.BasePower);
             }
+
+            _followOffset = GenerateFollowOffset();
+            _offsetRefreshTimer = offsetRefreshInterval;
         }
 
         private void Update()
@@ -60,6 +69,13 @@ namespace PetSimLite.Pets
             }
             else
             {
+                _offsetRefreshTimer -= Time.deltaTime;
+                if (_offsetRefreshTimer <= 0f)
+                {
+                    _followOffset = GenerateFollowOffset();
+                    _offsetRefreshTimer = offsetRefreshInterval;
+                }
+
                 FollowPlayer();
             }
         }
@@ -78,10 +94,11 @@ namespace PetSimLite.Pets
 
         private void FollowPlayer()
         {
-            float dist = Vector3.Distance(transform.position, _player.position);
+            Vector3 targetPos = _player.position + _followOffset;
+            float dist = Vector3.Distance(transform.position, targetPos);
             if (dist > followRange)
             {
-                MoveTowards(_player.position);
+                MoveTowards(targetPos);
             }
         }
 
@@ -111,6 +128,12 @@ namespace PetSimLite.Pets
                 target.ApplyDamage(damageInt);
                 _damageBuffer -= damageInt;
             }
+        }
+
+        private Vector3 GenerateFollowOffset()
+        {
+            Vector2 circle = Random.insideUnitCircle * followScatterRadius;
+            return new Vector3(circle.x, 0f, circle.y);
         }
     }
 }

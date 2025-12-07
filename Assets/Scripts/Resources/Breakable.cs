@@ -34,7 +34,6 @@ namespace PetSimLite.Resources
         {
             if (_isDead) return;
             _isDead = true;
-
             CurrencyManager.Instance?.AddCoins(coinReward);
             Destroy(gameObject);
         }

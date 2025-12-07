@@ -11,21 +11,23 @@ namespace PetSimLite.UI
     {
         [SerializeField] private TextMeshProUGUI coinText;
 
+        private CurrencyManager _currency;
+
         private void OnEnable()
         {
+            // If manager already exists, subscribe immediately; otherwise wait for initialization.
             if (CurrencyManager.Instance != null)
             {
-                CurrencyManager.Instance.CoinsChanged += OnCoinsChanged;
-                OnCoinsChanged(CurrencyManager.Instance.Coins);
+                Attach(CurrencyManager.Instance);
             }
+
+            CurrencyManager.InstanceInitialized += OnCurrencyInitialized;
         }
 
         private void OnDisable()
         {
-            if (CurrencyManager.Instance != null)
-            {
-                CurrencyManager.Instance.CoinsChanged -= OnCoinsChanged;
-            }
+            CurrencyManager.InstanceInitialized -= OnCurrencyInitialized;
+            Detach();
         }
 
         private void OnCoinsChanged(int amount)
@@ -34,6 +36,30 @@ namespace PetSimLite.UI
             {
                 coinText.text = amount.ToString();
             }
+        }
+
+        private void OnCurrencyInitialized(CurrencyManager manager)
+        {
+            Attach(manager);
+        }
+
+        private void Attach(CurrencyManager manager)
+        {
+            if (manager == null || _currency == manager) return;
+
+            Detach();
+            _currency = manager;
+            _currency.CoinsChanged += OnCoinsChanged;
+            OnCoinsChanged(_currency.Coins);
+        }
+
+        private void Detach()
+        {
+            if (_currency != null)
+            {
+                _currency.CoinsChanged -= OnCoinsChanged;
+            }
+            _currency = null;
         }
     }
 }
