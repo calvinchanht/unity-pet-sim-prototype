@@ -1,0 +1,6 @@
+zoneId,displayName,width,length,breakableAreaWidth,breakableAreaLength,eggId,gateId
+zone1,Zone 1,50,50,40,40,egg_zone1,
+zone2,Zone 2,50,50,40,40,egg_zone2,gate_zone2
+zone3,Zone 3,50,50,40,40,egg_zone3,gate_zone3
+zone4,Zone 4,50,50,40,40,egg_zone4,gate_zone4
+zone5,Zone 5,50,50,40,40,egg_zone5,gate_zone5

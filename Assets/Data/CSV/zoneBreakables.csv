@@ -1,0 +1,16 @@
+zoneId,breakableTemplateId,count,respawnSeconds
+zone1,break_zone1_coin,10,5
+zone1,break_zone1_chest1,5,10
+zone1,break_zone1_chest2,1,30
+zone2,break_zone2_coin,10,5
+zone2,break_zone2_chest1,5,10
+zone2,break_zone2_chest2,1,30
+zone3,break_zone3_coin,10,5
+zone3,break_zone3_chest1,5,10
+zone3,break_zone3_chest2,1,30
+zone4,break_zone4_coin,10,5
+zone4,break_zone4_chest1,5,10
+zone4,break_zone4_chest2,1,30
+zone5,break_zone5_coin,10,5
+zone5,break_zone5_chest1,5,10
+zone5,break_zone5_chest2,1,30

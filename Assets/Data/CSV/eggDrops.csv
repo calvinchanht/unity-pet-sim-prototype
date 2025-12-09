@@ -1,0 +1,16 @@
+eggId,petTemplateId,weight
+egg_zone1,pet_zone1_common,60
+egg_zone1,pet_zone1_rare,30
+egg_zone1,pet_zone1_epic,10
+egg_zone2,pet_zone2_common,60
+egg_zone2,pet_zone2_rare,30
+egg_zone2,pet_zone2_epic,10
+egg_zone3,pet_zone3_common,60
+egg_zone3,pet_zone3_rare,30
+egg_zone3,pet_zone3_epic,10
+egg_zone4,pet_zone4_common,60
+egg_zone4,pet_zone4_rare,30
+egg_zone4,pet_zone4_epic,10
+egg_zone5,pet_zone5_common,60
+egg_zone5,pet_zone5_rare,30
+egg_zone5,pet_zone5_epic,10

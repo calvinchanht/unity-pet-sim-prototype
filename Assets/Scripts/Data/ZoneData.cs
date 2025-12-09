@@ -8,22 +8,30 @@ namespace PetSimLite.Data
     {
         [SerializeField] private string zoneId;
         [SerializeField] private string displayName;
+        [SerializeField] private float width = 50f;
+        [SerializeField] private float length = 50f;
+        [SerializeField] private float breakableAreaWidth = 40f;
+        [SerializeField] private float breakableAreaLength = 40f;
         [SerializeField] private EggData egg;
         [SerializeField] private GateData gate;
-        [SerializeField] private BreakableConfig breakableConfig;
+        [SerializeField] private BreakableSpawnConfig[] breakableSpawns;
 
         public string ZoneId => zoneId;
         public string DisplayName => displayName;
+        public float Width => width;
+        public float Length => length;
+        public float BreakableAreaWidth => breakableAreaWidth;
+        public float BreakableAreaLength => breakableAreaLength;
         public EggData Egg => egg;
         public GateData Gate => gate;
-        public BreakableConfig Breakable => breakableConfig;
+        public BreakableSpawnConfig[] BreakableSpawns => breakableSpawns;
     }
 
-    [Serializable]
-    public struct BreakableConfig
+    [System.Serializable]
+    public struct BreakableSpawnConfig
     {
-        public GameObject prefab;
-        public int maxHealth;
-        public int coinReward;
+        public BreakableTemplateData template;
+        public int count;
+        public float respawnSeconds;
     }
 }

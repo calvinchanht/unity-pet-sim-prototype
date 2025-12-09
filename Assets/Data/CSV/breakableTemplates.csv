@@ -1,0 +1,16 @@
+breakableTemplateId,type,prefabPath,maxHealth,coinReward,prefabScale
+break_zone1_coin,Coin,Assets/Art/Props/GoldCoins/Prefabs/GoldCoins.prefab,20,25,1
+break_zone1_chest1,Chest,Assets/Art/Props/Chests/Prefabs/Chest01.prefab,60,75,1
+break_zone1_chest2,Chest,Assets/Art/Props/Chests/Prefabs/Chest05.prefab,100,200,1
+break_zone2_coin,Coin,Assets/Art/Props/GoldCoins/Prefabs/GoldCoins.prefab,60,100,1
+break_zone2_chest1,Chest,Assets/Art/Props/Chests/Prefabs/Chest02.prefab,180,300,1
+break_zone2_chest2,Chest,Assets/Art/Props/Chests/Prefabs/Chest06.prefab,300,800,1
+break_zone3_coin,Coin,Assets/Art/Props/GoldCoins/Prefabs/GoldCoins.prefab,180,400,1
+break_zone3_chest1,Chest,Assets/Art/Props/Chests/Prefabs/Chest03.prefab,540,1000,1
+break_zone3_chest2,Chest,Assets/Art/Props/Chests/Prefabs/Chest07.prefab,900,2800,1
+break_zone4_coin,Coin,Assets/Art/Props/GoldCoins/Prefabs/GoldCoins.prefab,540,1200,1
+break_zone4_chest1,Chest,Assets/Art/Props/Chests/Prefabs/Chest04.prefab,1620,3000,1
+break_zone4_chest2,Chest,Assets/Art/Props/Chests/Prefabs/Chest08.prefab,2700,8400,1
+break_zone5_coin,Coin,Assets/Art/Props/GoldCoins/Prefabs/GoldCoins.prefab,1600,5000,1
+break_zone5_chest1,Chest,Assets/Art/Props/Chests/Prefabs/Chest05.prefab,4800,12000,1
+break_zone5_chest2,Chest,Assets/Art/Props/Chests/Prefabs/Chest09.prefab,9000,34000,1

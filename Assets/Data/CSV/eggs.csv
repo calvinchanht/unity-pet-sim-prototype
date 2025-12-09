@@ -1,0 +1,6 @@
+eggId,cost,rollIntervalSeconds,prefabPath,prefabScale
+egg_zone1,100,0.8,Assets/Art/Props/Eggs/Prefabs/BoringEgg.prefab,1
+egg_zone2,400,0.8,Assets/Art/Props/Eggs/Prefabs/BlinkingEgg.prefab,1
+egg_zone3,1600,0.8,Assets/Art/Props/Eggs/Prefabs/KillerEgg.prefab,1
+egg_zone4,6400,0.8,Assets/Art/Props/Eggs/Prefabs/GoldenEgg.prefab,1
+egg_zone5,20000,0.8,Assets/Art/Props/Eggs/Prefabs/CrackedEgg.prefab,1

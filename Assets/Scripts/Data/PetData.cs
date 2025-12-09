@@ -17,10 +17,14 @@ namespace PetSimLite.Data
         [SerializeField] private string displayName;
         [SerializeField] private PetRarity rarity;
         [SerializeField] private float basePower = 1f;
+        [SerializeField] private GameObject prefab;
+        [SerializeField] private float prefabScale = 1f;
 
         public string PetId => petId;
         public string DisplayName => displayName;
         public PetRarity Rarity => rarity;
         public float BasePower => basePower;
+        public GameObject Prefab => prefab;
+        public float PrefabScale => prefabScale;
     }
 }
