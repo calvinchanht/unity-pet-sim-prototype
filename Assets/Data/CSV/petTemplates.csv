@@ -2,7 +2,7 @@ petTemplateId,displayName,rarity,basePower,prefabPath,prefabScale
 pet_zone1_common,Aloof Cat,Common,1,Assets/Art/Pets/Cat/Cat.prefab,1
 pet_zone1_rare,Anxious Chicken,Rare,2.5,Assets/Art/Pets/Chicken/Chicken.prefab,1
 pet_zone1_epic,Stubborn Bull,Epic,5,Assets/Art/Pets/Bull/Bull.prefab,1
-pet_zone2_common,Sleepy Koala,Common,6,Assets/Art/Pets/Koala.prefab,1
+pet_zone2_common,Sleepy Koala,Common,6,Assets/Art/Pets/Koala/Koala.prefab,1
 pet_zone2_rare,Jolly Reindeer,Rare,9,Assets/Art/Pets/Reindeer/Reindeer.prefab,1
 pet_zone2_epic,Mysterious Rayfish,Epic,14,Assets/Art/Pets/RayFish/RayFish.prefab,1
 pet_zone3_common,Chill Panda,Common,18,Assets/Art/Pets/Panda/Panda.prefab,1

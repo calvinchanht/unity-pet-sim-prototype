@@ -1,0 +1,2 @@
+startingCoins,startingZoneId,defaultPetPrefabPath,gateSize,gateLabel
+500,zone1,Assets/Art/Pets/Cat/Cat.prefab,"4|3|0.5","UNLOCK NEXT ZONE"
