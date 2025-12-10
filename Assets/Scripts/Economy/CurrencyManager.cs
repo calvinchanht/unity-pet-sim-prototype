@@ -50,5 +50,11 @@ namespace PetSimLite.Economy
             CoinsChanged?.Invoke(_coins);
             return true;
         }
+
+        public void InitializeCoins(int amount)
+        {
+            _coins = Mathf.Max(0, amount);
+            CoinsChanged?.Invoke(_coins);
+        }
     }
 }

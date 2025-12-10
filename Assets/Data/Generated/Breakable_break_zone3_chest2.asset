@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5983e62876e258247960064090faccd8, type: 3}
+  m_Name: Breakable_break_zone3_chest2
+  m_EditorClassIdentifier: Assembly-CSharp::PetSimLite.Data.BreakableTemplateData
+  templateId: break_zone3_chest2
+  prefab: {fileID: 7702758211444969477, guid: b7adede9fd624384297ca993f7a7f372, type: 3}
+  maxHealth: 900
+  coinReward: 2800
+  prefabScale: 1

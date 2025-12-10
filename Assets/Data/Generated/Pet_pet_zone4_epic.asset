@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13c405c76770c1c44a1001d83ad174c8, type: 3}
+  m_Name: Pet_pet_zone4_epic
+  m_EditorClassIdentifier: Assembly-CSharp::PetSimLite.Data.PetData
+  petId: pet_zone4_epic
+  displayName: Clever Fox
+  rarity: 2
+  basePower: 100
+  prefab: {fileID: 407129107028490968, guid: 2d902c983c011a642b9003572e1ca598, type: 3}
+  prefabScale: 1

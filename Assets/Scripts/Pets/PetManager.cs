@@ -20,7 +20,7 @@ namespace PetSimLite.Pets
 
         [Header("References")]
         [SerializeField] private Transform player;
-        [SerializeField] private GameObject petPrefab;
+        [SerializeField] private GameObject defaultPetPrefab;
 
         [Header("Limits")]
         [SerializeField] private int maxActivePets = 10;
@@ -118,14 +118,22 @@ namespace PetSimLite.Pets
 
         private void SpawnPet(OwnedPet petInstance)
         {
-            if (petPrefab == null || player == null || petInstance.Data == null) return;
+            if (player == null || petInstance.Data == null) return;
 
             Vector3 offset = Random.insideUnitSphere;
             offset.y = 0f;
             offset = offset.normalized * Random.Range(0.5f, spawnRadius);
             Vector3 spawnPos = player.position + offset;
 
-            GameObject obj = Instantiate(petPrefab, spawnPos, Quaternion.identity);
+            GameObject prefabToUse = petInstance.Data.Prefab != null ? petInstance.Data.Prefab : defaultPetPrefab;
+            if (prefabToUse == null)
+            {
+                Debug.LogWarning($"[PetManager] No prefab available for pet {petInstance.Data.PetId}");
+                return;
+            }
+
+            GameObject obj = Instantiate(prefabToUse, spawnPos, Quaternion.identity);
+            obj.transform.localScale *= petInstance.Data.PrefabScale;
             var agent = obj.GetComponent<PetAgent>();
             if (agent == null)
             {
@@ -189,6 +197,16 @@ namespace PetSimLite.Pets
             }
 
             return null;
+        }
+
+        public void SetPlayer(Transform playerTransform)
+        {
+            player = playerTransform;
+        }
+
+        public void SetDefaultPetPrefab(GameObject prefab)
+        {
+            defaultPetPrefab = prefab;
         }
     }
 }

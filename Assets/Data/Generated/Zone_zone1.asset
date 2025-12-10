@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98f2626395f6e684d88e478010c30e65, type: 3}
+  m_Name: Zone_zone1
+  m_EditorClassIdentifier: Assembly-CSharp::PetSimLite.Data.ZoneData
+  zoneId: zone1
+  displayName: Zone 1
+  width: 50
+  length: 50
+  breakableAreaWidth: 40
+  breakableAreaLength: 40
+  nextDirection: 2
+  nextZoneId: zone2
+  floorColor: {r: 0.23137255, g: 0.50980395, b: 0.9647059, a: 1}
+  wallColor: {r: 0.6117647, g: 0.6392157, b: 0.6862745, a: 1}
+  egg: {fileID: 11400000, guid: 691a1b905559e67459d9639355b601bc, type: 2}
+  gate: {fileID: 0}
+  breakableSpawns:
+  - template: {fileID: 11400000, guid: 92211c44e75c9eb409251b7271d3d994, type: 2}
+    count: 10
+    respawnSeconds: 5
+  - template: {fileID: 11400000, guid: 83fc8848141c66841b3e9867fcd6d202, type: 2}
+    count: 5
+    respawnSeconds: 10
+  - template: {fileID: 11400000, guid: 73fd349ae758cdb4390ddeb1052079ca, type: 2}
+    count: 1
+    respawnSeconds: 30

@@ -11,24 +11,30 @@ namespace PetSimLite.Editor
     /// <summary>
     /// Simple CSV -> ScriptableObject importer for pet templates, eggs (with drop table), gates, breakable templates, and zones.
     /// Expected CSV files in Assets/Data/CSV:
-    /// petTemplates.csv, eggs.csv, eggDrops.csv, gates.csv, breakableTemplates.csv, zones.csv, zoneBreakables.csv
+        /// PetTemplates.csv, Eggs.csv, EggDrops.csv, Gates.csv, BreakableTemplates.csv, Zones.csv, ZoneBreakables.csv, GameSettings.csv
     /// Output assets are written to Assets/Data/Generated/.
     /// </summary>
     public static class CSVImporter
     {
         private const string CsvFolder = "Assets/Data/CSV";
         private const string GeneratedFolder = "Assets/Data/Generated";
+        private const string GeneratedResourcesFolder = "Assets/Data/Generated/Resources";
+        private const string ZoneCatalogAssetPath = GeneratedResourcesFolder + "/ZoneCatalog.asset";
+        private const string GameSettingsAssetPath = GeneratedResourcesFolder + "/GameSettings.asset";
 
         [MenuItem("Tools/PetSimLite/Import CSV Data")]
         public static void ImportAll()
         {
             EnsureFolder(GeneratedFolder);
+            EnsureFolder(GeneratedResourcesFolder);
 
             var petAssets = ImportPetTemplates();
             var gateAssets = ImportGates();
             var breakableTemplates = ImportBreakableTemplates();
             var eggAssets = ImportEggs(petAssets);
-            ImportZones(eggAssets, gateAssets, breakableTemplates);
+            var zoneList = ImportZones(eggAssets, gateAssets, breakableTemplates);
+            ImportGameSettings(petAssets);
+            ImportZoneCatalog(zoneList);
 
             AssetDatabase.SaveAssets();
             Debug.Log("[CSV Importer] Import completed.");
@@ -38,7 +44,7 @@ namespace PetSimLite.Editor
 
         private static Dictionary<string, PetData> ImportPetTemplates()
         {
-            string path = Path.Combine(CsvFolder, "petTemplates.csv");
+            string path = Path.Combine(CsvFolder, "PetTemplates.csv");
             var rows = ReadCsv(path);
             var pets = new Dictionary<string, PetData>();
 
@@ -87,7 +93,7 @@ namespace PetSimLite.Editor
 
         private static Dictionary<string, GateData> ImportGates()
         {
-            string path = Path.Combine(CsvFolder, "gates.csv");
+            string path = Path.Combine(CsvFolder, "Gates.csv");
             var rows = ReadCsv(path);
             var gates = new Dictionary<string, GateData>();
 
@@ -112,8 +118,8 @@ namespace PetSimLite.Editor
 
         private static Dictionary<string, EggData> ImportEggs(Dictionary<string, PetData> petsById)
         {
-            string eggsPath = Path.Combine(CsvFolder, "eggs.csv");
-            string dropsPath = Path.Combine(CsvFolder, "eggDrops.csv");
+            string eggsPath = Path.Combine(CsvFolder, "Eggs.csv");
+            string dropsPath = Path.Combine(CsvFolder, "EggDrops.csv");
 
             var eggRows = ReadCsv(eggsPath);
             var dropRows = ReadCsv(dropsPath);
@@ -190,7 +196,7 @@ namespace PetSimLite.Editor
 
         private static Dictionary<string, BreakableTemplateData> ImportBreakableTemplates()
         {
-            string path = Path.Combine(CsvFolder, "breakableTemplates.csv");
+            string path = Path.Combine(CsvFolder, "BreakableTemplates.csv");
             var rows = ReadCsv(path);
             var templates = new Dictionary<string, BreakableTemplateData>();
 
@@ -226,11 +232,12 @@ namespace PetSimLite.Editor
             return templates;
         }
 
-        private static void ImportZones(Dictionary<string, EggData> eggsById, Dictionary<string, GateData> gatesById, Dictionary<string, BreakableTemplateData> breakablesById)
+        private static List<ZoneData> ImportZones(Dictionary<string, EggData> eggsById, Dictionary<string, GateData> gatesById, Dictionary<string, BreakableTemplateData> breakablesById)
         {
-            string path = Path.Combine(CsvFolder, "zones.csv");
+            string path = Path.Combine(CsvFolder, "Zones.csv");
             var rows = ReadCsv(path);
-            var breakableRows = ReadCsv(Path.Combine(CsvFolder, "zoneBreakables.csv"));
+            var breakableRows = ReadCsv(Path.Combine(CsvFolder, "ZoneBreakables.csv"));
+            var imported = new List<ZoneData>();
 
             // group breakables per zone
             var breakablesPerZone = breakableRows
@@ -254,6 +261,34 @@ namespace PetSimLite.Editor
                 so.FindProperty("length").floatValue = ParseFloat(Get(row, "length", "50"), 50f);
                 so.FindProperty("breakableAreaWidth").floatValue = ParseFloat(Get(row, "breakableAreaWidth", "40"), 40f);
                 so.FindProperty("breakableAreaLength").floatValue = ParseFloat(Get(row, "breakableAreaLength", "40"), 40f);
+
+                var dirStr = Get(row, "nextDirection", "None");
+                if (Enum.TryParse(dirStr, true, out ZoneDirection dir))
+                {
+                    so.FindProperty("nextDirection").enumValueIndex = (int)dir;
+                }
+                else
+                {
+                    so.FindProperty("nextDirection").enumValueIndex = (int)ZoneDirection.None;
+                    Debug.LogWarning($"[CSV Importer] Zone '{zoneId}' has unknown nextDirection '{dirStr}', defaulting to None.");
+                }
+
+                string nextZoneId = Get(row, "nextZoneId", string.Empty);
+                so.FindProperty("nextZoneId").stringValue = nextZoneId.Trim();
+
+                Color floorCol = Color.gray;
+                if (!ColorUtility.TryParseHtmlString(Get(row, "floorColor", "#808080"), out floorCol))
+                {
+                    floorCol = Color.gray;
+                }
+                so.FindProperty("floorColor").colorValue = floorCol;
+
+                Color wallCol = Color.white;
+                if (!ColorUtility.TryParseHtmlString(Get(row, "wallColor", "#ffffff"), out wallCol))
+                {
+                    wallCol = Color.white;
+                }
+                so.FindProperty("wallColor").colorValue = wallCol;
 
                 // Egg link
                 var eggId = Get(row, "eggId", string.Empty);
@@ -304,7 +339,66 @@ namespace PetSimLite.Editor
                 }
 
                 so.ApplyModifiedProperties();
+                imported.Add(asset);
             }
+
+            return imported;
+        }
+
+        private static void ImportGameSettings(Dictionary<string, PetData> petsById)
+        {
+            string path = Path.Combine(CsvFolder, "GameSettings.csv");
+            var rows = ReadCsv(path);
+            if (rows.Count == 0) return;
+
+            var row = rows[0]; // single row expected
+            var asset = GetOrCreateAsset<GameSettings>(GameSettingsAssetPath);
+            var so = new SerializedObject(asset);
+
+            so.FindProperty("startingCoins").intValue = ParseInt(Get(row, "startingCoins", "0"), 0);
+            so.FindProperty("startingZoneId").stringValue = Get(row, "startingZoneId", "zone1");
+
+            string petPath = Get(row, "defaultPetPrefabPath", string.Empty);
+            GameObject petPrefab = !string.IsNullOrWhiteSpace(petPath)
+                ? AssetDatabase.LoadAssetAtPath<GameObject>(petPath)
+                : null;
+            so.FindProperty("defaultPetPrefab").objectReferenceValue = petPrefab;
+
+            Vector3 gateSize = ParseVector3(Get(row, "gateSize", "4|3|0.5"), new Vector3(4f, 3f, 0.5f));
+            so.FindProperty("gateSize").vector3Value = gateSize;
+            so.FindProperty("gateLabel").stringValue = Get(row, "gateLabel", "UNLOCK NEXT ZONE");
+
+            so.ApplyModifiedProperties();
+        }
+
+        private static void ImportZoneCatalog(List<ZoneData> zones)
+        {
+            if (zones == null) return;
+
+            var asset = GetOrCreateAsset<ZoneCatalog>(ZoneCatalogAssetPath);
+            var so = new SerializedObject(asset);
+            var listProp = so.FindProperty("zones");
+            listProp.ClearArray();
+            listProp.arraySize = zones.Count;
+            for (int i = 0; i < zones.Count; i++)
+            {
+                listProp.GetArrayElementAtIndex(i).objectReferenceValue = zones[i];
+            }
+            so.ApplyModifiedProperties();
+        }
+
+        private static Vector3 ParseVector3(string value, Vector3 fallback)
+        {
+            if (string.IsNullOrWhiteSpace(value)) return fallback;
+            var parts = value.Split('|');
+            if (parts.Length != 3) return fallback;
+            if (float.TryParse(parts[0], out var x) &&
+                float.TryParse(parts[1], out var y) &&
+                float.TryParse(parts[2], out var z))
+            {
+                return new Vector3(x, y, z);
+            }
+            return fallback;
         }
 
         #endregion

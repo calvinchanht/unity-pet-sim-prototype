@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de8e5f14bddb31548a5b503cbcd8a6d8, type: 3}
+  m_Name: ZoneCatalog
+  m_EditorClassIdentifier: Assembly-CSharp::PetSimLite.Data.ZoneCatalog
+  zones:
+  - {fileID: 11400000, guid: 599f3e8f7b8a8314a97bb5cec8997f87, type: 2}
+  - {fileID: 11400000, guid: 3c49579146d7147449e08f50dfd60399, type: 2}
+  - {fileID: 11400000, guid: dffa94c74ea6ff540bc2fcde881b94b6, type: 2}
+  - {fileID: 11400000, guid: 470bcd91c61c9814a9611faf92c4403e, type: 2}
+  - {fileID: 11400000, guid: c3b47cb76526e824fb9ec922f4d62873, type: 2}

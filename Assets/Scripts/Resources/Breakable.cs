@@ -30,6 +30,14 @@ namespace PetSimLite.Resources
             }
         }
 
+        public void InitializeTemplate(Data.BreakableTemplateData template)
+        {
+            if (template == null) return;
+            maxHealth = template.MaxHealth;
+            coinReward = template.CoinReward;
+            _currentHealth = maxHealth;
+        }
+
         private void Die()
         {
             if (_isDead) return;

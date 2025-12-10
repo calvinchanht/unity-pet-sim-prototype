@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 731f3cba224626f4f87fe0735b74ffca, type: 3}
+  m_Name: Egg_egg_zone5
+  m_EditorClassIdentifier: Assembly-CSharp::PetSimLite.Data.EggData
+  eggId: egg_zone5
+  eggCost: 20000
+  rollIntervalSeconds: 0.8
+  dropTable:
+  - pet: {fileID: 11400000, guid: b4d3939b6cec39e448c7b24629a2d5ba, type: 2}
+    weight: 60
+  - pet: {fileID: 11400000, guid: 825c3c079a5a30a44bc2ffcdc709dd68, type: 2}
+    weight: 30
+  - pet: {fileID: 11400000, guid: a684b6eadfd9aa1478883523df899046, type: 2}
+    weight: 10
+  prefab: {fileID: 778976269782413602, guid: a051a884b79898c4c88783a5554e8bca, type: 3}
+  prefabScale: 1

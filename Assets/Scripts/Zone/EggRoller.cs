@@ -144,5 +144,10 @@ namespace PetSimLite.Zone
 
             return table[table.Length - 1].pet;
         }
+
+        public void SetEggData(EggData data)
+        {
+            eggData = data;
+        }
     }
 }
