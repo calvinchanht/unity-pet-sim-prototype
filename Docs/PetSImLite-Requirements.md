@@ -219,6 +219,12 @@ The system should be data-driven so additional zones, eggs, pets, and coin/chest
   * More eggs and pets.
   * Additional mechanics (rebirth, upgrades, etc.) later.
 
+### Data Flow & Bootstrap (Runtime)
+
+* Author/tune data in CSVs under `Assets/Data/CSV/` (PascalCase filenames). Importer generates ScriptableObjects under `Assets/Data/Generated/` (e.g., `GameSettings.asset`, `ZoneData`, `ZoneCatalog.asset`). Code reads generated assets, not raw CSV at runtime.
+* Auto-import on Play is enabled via editor hook; you can also run `Tools/PetSimLite/Import CSV Data` manually to regenerate assets after CSV changes.
+* `GameBootstrap` is the single scene entry point: it loads `GameSettings`, resolves zone order via `startingZoneId`/`nextZoneId`, spawns systems (CurrencyManager/PetManager), player, UI, and builds zones procedurally (floors/walls/gates/eggs/breakables). Gates are procedural; no gate prefab needed.
+
 ## 12. Data Authoring with Google Sheets / CSV
 
 * Core game data (zones, eggs, pets, player settings, general game settings) can be authored in a shared Google Sheets document.

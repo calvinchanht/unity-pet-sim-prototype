@@ -29,6 +29,7 @@
 
 - Use C# and Unity as described in the requirements doc.
 - Make small, focused changes rather than huge refactors.
+- Avoid deleting/recreating CSVs; edit in place to preserve user data/meta.
 - When editing code:
   - Explain what you plan to do in a few bullet points.
   - Clearly indicate which files you changed.
