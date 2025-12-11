@@ -30,10 +30,11 @@
 - Use C# and Unity as described in the requirements doc.
 - Make small, focused changes rather than huge refactors.
 - Avoid deleting/recreating CSVs; edit in place to preserve user data/meta.
+- Avoid magic numbers/strings: prefer configurable fields. If a value can’t naturally use an editor default, surface it via config (CSV/ScriptableObject) and remind the user to update it when changed.
+- Clarify major game design decisions with the user; make minor decisions yourself and explain the reasoning.
 - When editing code:
   - Explain what you plan to do in a few bullet points.
   - Clearly indicate which files you changed.
 - Git:
   - Show diffs or summaries of edits.
   - **Do not commit or push** unless explicitly requested.
-
