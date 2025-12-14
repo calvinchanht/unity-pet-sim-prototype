@@ -32,6 +32,8 @@
 - Avoid deleting/recreating CSVs; edit in place to preserve user data/meta.
 - Avoid magic numbers/strings: prefer configurable fields. If a value can’t naturally use an editor default, surface it via config (CSV/ScriptableObject) and remind the user to update it when changed.
 - Clarify major game design decisions with the user; make minor decisions yourself and explain the reasoning.
+- Plans should be lightweight for tiny edits, and detailed for multi-step features; include “Visible Changes” and “Verification Steps” when implementing gameplay features.
+- Debug logging for verification should be toggleable (or editor-only) to avoid spamming the console during normal play.
 - When editing code:
   - Explain what you plan to do in a few bullet points.
   - Clearly indicate which files you changed.
