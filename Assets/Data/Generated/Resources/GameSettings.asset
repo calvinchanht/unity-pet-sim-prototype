@@ -14,6 +14,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PetSimLite.Data.GameSettings
   startingCoins: 500
   startingZoneId: zone1
+  playerPrefab: {fileID: 874388205373941625, guid: a29fb278547d1f4479b4813cfa788027, type: 3}
+  uiCanvasPrefab: {fileID: 0}
   defaultPetPrefab: {fileID: 8688991587543641553, guid: 66bcefc32cc263946934b1f019351ba9, type: 3}
   gateSize: {x: 4, y: 3, z: 0.5}
   gateLabel: '"UNLOCK NEXT ZONE"'
+  walkSpeed: 6
+  runSpeed: 10
+  jumpHeight: 1.5
+  gravity: -20
+  animatorHorParam: Hor
+  animatorVertParam: Vert
+  animatorStateParam: State
+  animatorIsJumpParam: IsJump
+  cameraDistance: 6
+  cameraMinDistance: 2
+  cameraMaxDistance: 12
+  cameraPitch: 18
+  cameraMinPitch: -10
+  cameraMaxPitch: 60
+  cameraSensitivityX: 0.2
+  cameraSensitivityY: 0.15
+  cameraFollowLerp: 15
+  cameraLookOffsetY: 1.6
+  cameraRotateOnlyWhileRmbHeld: 1

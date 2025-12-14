@@ -358,6 +358,16 @@ namespace PetSimLite.Editor
             so.FindProperty("startingCoins").intValue = ParseInt(Get(row, "startingCoins", "0"), 0);
             so.FindProperty("startingZoneId").stringValue = Get(row, "startingZoneId", "zone1");
 
+            string playerPath = Get(row, "playerPrefabPath", string.Empty);
+            so.FindProperty("playerPrefab").objectReferenceValue = !string.IsNullOrWhiteSpace(playerPath)
+                ? AssetDatabase.LoadAssetAtPath<GameObject>(playerPath)
+                : null;
+
+            string uiPath = Get(row, "uiCanvasPrefabPath", string.Empty);
+            so.FindProperty("uiCanvasPrefab").objectReferenceValue = !string.IsNullOrWhiteSpace(uiPath)
+                ? AssetDatabase.LoadAssetAtPath<GameObject>(uiPath)
+                : null;
+
             string petPath = Get(row, "defaultPetPrefabPath", string.Empty);
             GameObject petPrefab = !string.IsNullOrWhiteSpace(petPath)
                 ? AssetDatabase.LoadAssetAtPath<GameObject>(petPath)
@@ -367,6 +377,28 @@ namespace PetSimLite.Editor
             Vector3 gateSize = ParseVector3(Get(row, "gateSize", "4|3|0.5"), new Vector3(4f, 3f, 0.5f));
             so.FindProperty("gateSize").vector3Value = gateSize;
             so.FindProperty("gateLabel").stringValue = Get(row, "gateLabel", "UNLOCK NEXT ZONE");
+
+            so.FindProperty("walkSpeed").floatValue = ParseFloat(Get(row, "walkSpeed", "6"), 6f);
+            so.FindProperty("runSpeed").floatValue = ParseFloat(Get(row, "runSpeed", "10"), 10f);
+            so.FindProperty("jumpHeight").floatValue = ParseFloat(Get(row, "jumpHeight", "1.5"), 1.5f);
+            so.FindProperty("gravity").floatValue = ParseFloat(Get(row, "gravity", "-20"), -20f);
+
+            so.FindProperty("animatorHorParam").stringValue = Get(row, "animatorHorParam", "Hor");
+            so.FindProperty("animatorVertParam").stringValue = Get(row, "animatorVertParam", "Vert");
+            so.FindProperty("animatorStateParam").stringValue = Get(row, "animatorStateParam", "State");
+            so.FindProperty("animatorIsJumpParam").stringValue = Get(row, "animatorIsJumpParam", "IsJump");
+
+            so.FindProperty("cameraDistance").floatValue = ParseFloat(Get(row, "cameraDistance", "6"), 6f);
+            so.FindProperty("cameraMinDistance").floatValue = ParseFloat(Get(row, "cameraMinDistance", "2"), 2f);
+            so.FindProperty("cameraMaxDistance").floatValue = ParseFloat(Get(row, "cameraMaxDistance", "12"), 12f);
+            so.FindProperty("cameraPitch").floatValue = ParseFloat(Get(row, "cameraPitch", "18"), 18f);
+            so.FindProperty("cameraMinPitch").floatValue = ParseFloat(Get(row, "cameraMinPitch", "-10"), -10f);
+            so.FindProperty("cameraMaxPitch").floatValue = ParseFloat(Get(row, "cameraMaxPitch", "60"), 60f);
+            so.FindProperty("cameraSensitivityX").floatValue = ParseFloat(Get(row, "cameraSensitivityX", "0.2"), 0.2f);
+            so.FindProperty("cameraSensitivityY").floatValue = ParseFloat(Get(row, "cameraSensitivityY", "0.15"), 0.15f);
+            so.FindProperty("cameraFollowLerp").floatValue = ParseFloat(Get(row, "cameraFollowLerp", "15"), 15f);
+            so.FindProperty("cameraLookOffsetY").floatValue = ParseFloat(Get(row, "cameraLookOffsetY", "1.6"), 1.6f);
+            so.FindProperty("cameraRotateOnlyWhileRmbHeld").boolValue = ParseBool(Get(row, "cameraRotateOnlyWhileRmbHeld", "true"), true);
 
             so.ApplyModifiedProperties();
         }
@@ -398,6 +430,13 @@ namespace PetSimLite.Editor
             {
                 return new Vector3(x, y, z);
             }
+            return fallback;
+        }
+
+        private static bool ParseBool(string value, bool fallback)
+        {
+            if (bool.TryParse(value, out var v)) return v;
+            if (int.TryParse(value, out var i)) return i != 0;
             return fallback;
         }
 

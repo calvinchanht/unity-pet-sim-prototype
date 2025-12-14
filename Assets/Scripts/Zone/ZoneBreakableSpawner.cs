@@ -75,11 +75,10 @@ namespace PetSimLite.ZoneGeneration
             var template = tracker.Config.template;
             if (template == null || template.Prefab == null) return;
 
-            Vector3 pos = GetRandomPointInArea(_zoneData.BreakableAreaWidth, _zoneData.BreakableAreaLength);
-            pos.y = transform.position.y;
+            Vector3 localPos = GetRandomLocalPointInArea(_zoneData.BreakableAreaWidth, _zoneData.BreakableAreaLength);
 
             var instance = Instantiate(template.Prefab, transform);
-            instance.transform.localPosition = pos;
+            instance.transform.localPosition = localPos;
             instance.transform.localScale *= template.PrefabScale;
 
             var breakable = instance.GetComponent<Breakable>();
@@ -92,11 +91,11 @@ namespace PetSimLite.ZoneGeneration
             tracker.Active.Add(breakable);
         }
 
-        private Vector3 GetRandomPointInArea(float width, float length)
+        private static Vector3 GetRandomLocalPointInArea(float width, float length)
         {
             float x = Random.Range(-width * 0.5f, width * 0.5f);
             float z = Random.Range(-length * 0.5f, length * 0.5f);
-            return transform.position + new Vector3(x, 0f, z);
+            return new Vector3(x, 0f, z);
         }
     }
 }

@@ -32,11 +32,13 @@ namespace PetSimLite.Bootstrap
                 }
             }
 
-            var currency = EnsureCurrencyManager(gameSettings.StartingCoins);
-            var player = EnsurePlayer();
+            EnsureCurrencyManager(gameSettings.StartingCoins);
             EnsureUI();
-            var petManager = EnsurePetManager(player, gameSettings.DefaultPetPrefab);
             BuildZonesSequence();
+
+            var player = EnsurePlayer();
+            EnsureCamera(player);
+            EnsurePetManager(player, gameSettings.DefaultPetPrefab);
         }
 
         private CurrencyManager EnsureCurrencyManager(int startingCoins)
@@ -58,7 +60,40 @@ namespace PetSimLite.Bootstrap
             {
                 var pgo = Instantiate(playerPrefab);
                 pgo.name = "Player";
-                player = pgo.GetComponent<PlayerController>();
+                player = pgo.GetComponent<PlayerController>() ?? pgo.AddComponent<PlayerController>();
+            }
+
+            if (player == null && gameSettings.PlayerPrefab != null)
+            {
+                var pgo = Instantiate(gameSettings.PlayerPrefab);
+                pgo.name = "Player";
+                player = pgo.GetComponent<PlayerController>() ?? pgo.AddComponent<PlayerController>();
+            }
+
+            if (player != null)
+            {
+                if (player.GetComponent<CharacterController>() == null)
+                {
+                    player.gameObject.AddComponent<CharacterController>();
+                }
+                player.Configure(gameSettings);
+
+                // Ensure animator driver (drives Base_Mesh animator parameters).
+                var driver = player.GetComponent<PlayerAnimatorDriver>();
+                if (driver == null)
+                {
+                    driver = player.gameObject.AddComponent<PlayerAnimatorDriver>();
+                }
+                driver.Configure(gameSettings, player, player.GetComponentInChildren<Animator>());
+
+                DisableThirdPartyControllers(player.gameObject);
+
+                // Prefer controller-driven movement.
+                var animator = player.GetComponentInChildren<Animator>();
+                if (animator != null)
+                {
+                    animator.applyRootMotion = false;
+                }
             }
 
             return player;
@@ -66,9 +101,10 @@ namespace PetSimLite.Bootstrap
 
         private void EnsureUI()
         {
-            if (uiCanvasPrefab != null && FindFirstObjectByType<PetSimLite.UI.CoinHUD>() == null)
+            var prefab = uiCanvasPrefab != null ? uiCanvasPrefab : gameSettings.UiCanvasPrefab;
+            if (prefab != null && FindFirstObjectByType<PetSimLite.UI.CoinHUD>() == null)
             {
-                Instantiate(uiCanvasPrefab);
+                Instantiate(prefab);
             }
         }
 
@@ -84,6 +120,46 @@ namespace PetSimLite.Bootstrap
             petManager.SetPlayer(player != null ? player.transform : null);
             petManager.SetDefaultPetPrefab(defaultPetPrefab);
             return petManager;
+        }
+
+        private void EnsureCamera(PlayerController player)
+        {
+            if (player == null) return;
+
+            var cam = Camera.main;
+            if (cam == null)
+            {
+                var go = new GameObject("Main Camera");
+                cam = go.AddComponent<Camera>();
+                go.tag = "MainCamera";
+            }
+
+            // Disable old camera controller if present.
+            var old = cam.GetComponent<PetSimLite.CameraSystem.CameraFollowController>();
+            if (old != null) old.enabled = false;
+
+            var tp = cam.GetComponent<PetSimLite.CameraSystem.RobloxThirdPersonCamera>();
+            if (tp == null)
+            {
+                tp = cam.gameObject.AddComponent<PetSimLite.CameraSystem.RobloxThirdPersonCamera>();
+            }
+            tp.Configure(gameSettings, player.transform);
+        }
+
+        private static void DisableThirdPartyControllers(GameObject playerRoot)
+        {
+            // The ithappy prefab generator can add old-input movement scripts that conflict with our new Input System setup.
+            var behaviours = playerRoot.GetComponentsInChildren<MonoBehaviour>(true);
+            for (int i = 0; i < behaviours.Length; i++)
+            {
+                var mb = behaviours[i];
+                if (mb == null) continue;
+                string fullName = mb.GetType().FullName;
+                if (fullName == "Controller.MovePlayerInput" || fullName == "Controller.CharacterMover")
+                {
+                    mb.enabled = false;
+                }
+            }
         }
 
         private void BuildZonesSequence()

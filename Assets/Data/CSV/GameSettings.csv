@@ -1,2 +1,2 @@
-startingCoins,startingZoneId,defaultPetPrefabPath,gateSize,gateLabel
-500,zone1,Assets/Art/Pets/Cat/Cat.prefab,"4|3|0.5","UNLOCK NEXT ZONE"
+startingCoins,startingZoneId,playerPrefabPath,uiCanvasPrefabPath,defaultPetPrefabPath,gateSize,gateLabel,walkSpeed,runSpeed,jumpHeight,gravity,animatorHorParam,animatorVertParam,animatorStateParam,animatorIsJumpParam,cameraDistance,cameraMinDistance,cameraMaxDistance,cameraPitch,cameraMinPitch,cameraMaxPitch,cameraSensitivityX,cameraSensitivityY,cameraFollowLerp,cameraLookOffsetY,cameraRotateOnlyWhileRmbHeld
+500,zone1,Assets/Art/Player/Player.prefab,,Assets/Art/Pets/Cat/Cat.prefab,"4|3|0.5","UNLOCK NEXT ZONE",6,10,1.5,-20,Hor,Vert,State,IsJump,6,2,12,18,-10,60,0.2,0.15,15,1.6,true

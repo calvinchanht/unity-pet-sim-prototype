@@ -17,4 +17,4 @@ MonoBehaviour:
   rarity: 0
   basePower: 1
   prefab: {fileID: 8688991587543641553, guid: 66bcefc32cc263946934b1f019351ba9, type: 3}
-  prefabScale: 1
+  prefabScale: 0.25

@@ -1,23 +1,33 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using PetSimLite.Data;
 
 namespace PetSimLite.Player
 {
     /// <summary>
-    /// Handles drag-to-move (mobile-style) and optional WASD for desktop testing.
+    /// Roblox-style movement: WASD + Space jump + Shift run. Moves relative to the camera.
     /// </summary>
     [RequireComponent(typeof(CharacterController))]
     public class PlayerController : MonoBehaviour
     {
         [Header("Movement")]
-        [SerializeField] private float moveSpeed = 8f;
-        [SerializeField] private bool enableKeyboardFallback = true;
-        [SerializeField] private float dragDeadzonePixels = 4f;
+        [SerializeField] private float walkSpeed = 6f;
+        [SerializeField] private float runSpeed = 10f;
+        [SerializeField] private float jumpHeight = 1.5f;
+        [SerializeField] private float gravity = -20f;
+        [SerializeField] private float turnSpeed = 18f;
 
         private CharacterController _characterController;
         private Camera _mainCamera;
-        private Vector3 _dragStart;
-        private bool _isDragging;
+        private float _verticalVelocity;
+        private bool _jumpRequested;
+
+        [Header("Debug")]
+        [SerializeField] private bool enableDebugLogs = false;
+
+        public Vector2 MoveInput { get; private set; }
+        public bool IsRunning { get; private set; }
+        public bool IsGrounded => _characterController != null && _characterController.isGrounded;
 
         private void Awake()
         {
@@ -32,99 +42,83 @@ namespace PetSimLite.Player
                 _mainCamera = Camera.main;
             }
 
-            Vector3 moveDirection = Vector3.zero;
-
-            // Gesture-inspired drag input (ignored while using camera modifier keys).
-            if (!IsCameraModifierHeld())
-            {
-                moveDirection = GetDragDirection();
-            }
-
-            // Optional desktop fallback.
-            if (enableKeyboardFallback)
-            {
-                Vector3 keyboard = GetKeyboardInput();
-                if (keyboard.sqrMagnitude > 0f)
-                {
-                    moveDirection = keyboard;
-                }
-            }
-
-            if (moveDirection.sqrMagnitude > 0.001f)
-            {
-                moveDirection.Normalize();
-                _characterController.SimpleMove(moveDirection * moveSpeed);
-                transform.forward = Vector3.Lerp(transform.forward, moveDirection, 10f * Time.deltaTime);
-            }
+            ReadInput();
+            Move(Time.deltaTime);
         }
 
-        private Vector3 GetKeyboardInput()
+        public void Configure(GameSettings settings)
+        {
+            if (settings == null) return;
+            walkSpeed = settings.WalkSpeed;
+            runSpeed = settings.RunSpeed;
+            jumpHeight = settings.JumpHeight;
+            gravity = settings.Gravity;
+        }
+
+        private void ReadInput()
         {
             if (Keyboard.current == null)
             {
-                return Vector3.zero;
+                MoveInput = Vector2.zero;
+                IsRunning = false;
+                _jumpRequested = false;
+                return;
             }
 
-            float h = 0f;
-            float v = 0f;
-            if (Keyboard.current.aKey.isPressed) h -= 1f;
-            if (Keyboard.current.dKey.isPressed) h += 1f;
-            if (Keyboard.current.sKey.isPressed) v -= 1f;
-            if (Keyboard.current.wKey.isPressed) v += 1f;
+            float x = 0f;
+            float y = 0f;
+            if (Keyboard.current.aKey.isPressed) x -= 1f;
+            if (Keyboard.current.dKey.isPressed) x += 1f;
+            if (Keyboard.current.sKey.isPressed) y -= 1f;
+            if (Keyboard.current.wKey.isPressed) y += 1f;
 
-            return new Vector3(h, 0f, v);
+            MoveInput = Vector2.ClampMagnitude(new Vector2(x, y), 1f);
+            IsRunning = Keyboard.current.leftShiftKey.isPressed || Keyboard.current.rightShiftKey.isPressed;
+            _jumpRequested = Keyboard.current.spaceKey.wasPressedThisFrame;
         }
 
-        private Vector3 GetDragDirection()
+        private void Move(float deltaTime)
         {
-            if (Mouse.current == null)
+            Vector3 camForward = Vector3.forward;
+            Vector3 camRight = Vector3.right;
+            if (_mainCamera != null)
             {
-                return Vector3.zero;
+                camForward = _mainCamera.transform.forward;
+                camForward.y = 0f;
+                camForward.Normalize();
+
+                camRight = _mainCamera.transform.right;
+                camRight.y = 0f;
+                camRight.Normalize();
             }
 
-            if (Mouse.current.leftButton.wasPressedThisFrame)
+            Vector3 desiredMove = camRight * MoveInput.x + camForward * MoveInput.y;
+            if (desiredMove.sqrMagnitude > 0.0001f)
             {
-                _dragStart = Mouse.current.position.ReadValue();
-                _isDragging = true;
+                desiredMove.Normalize();
+                var targetRotation = Quaternion.LookRotation(desiredMove, Vector3.up);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, turnSpeed * deltaTime);
             }
 
-            if (Mouse.current.leftButton.wasReleasedThisFrame)
+            float speed = IsRunning ? runSpeed : walkSpeed;
+            Vector3 horizontal = desiredMove * speed;
+
+            if (IsGrounded && _verticalVelocity < 0f)
             {
-                _isDragging = false;
+                _verticalVelocity = -2f; // small downward force to keep grounded
             }
 
-            if (!_isDragging || _mainCamera == null)
+            if (IsGrounded && _jumpRequested)
             {
-                return Vector3.zero;
+                _verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
+                if (enableDebugLogs) Debug.Log("[Player] Jump");
             }
 
-            Vector2 delta = Mouse.current.position.ReadValue() - (Vector2)_dragStart;
-            if (delta.sqrMagnitude < dragDeadzonePixels * dragDeadzonePixels)
-            {
-                return Vector3.zero;
-            }
+            _verticalVelocity += gravity * deltaTime;
 
-            Vector3 camForward = _mainCamera.transform.forward;
-            camForward.y = 0f;
-            camForward.Normalize();
+            Vector3 velocity = horizontal + Vector3.up * _verticalVelocity;
+            _characterController.Move(velocity * deltaTime);
 
-            Vector3 camRight = _mainCamera.transform.right;
-            camRight.y = 0f;
-            camRight.Normalize();
-
-            Vector3 worldDirection = camRight * delta.x + camForward * delta.y;
-            return worldDirection;
-        }
-
-        private bool IsCameraModifierHeld()
-        {
-            if (Keyboard.current == null)
-            {
-                return false;
-            }
-
-            return Keyboard.current.leftShiftKey.isPressed || Keyboard.current.rightShiftKey.isPressed ||
-                   Keyboard.current.leftCtrlKey.isPressed || Keyboard.current.rightCtrlKey.isPressed;
         }
     }
 }

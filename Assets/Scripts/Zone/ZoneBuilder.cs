@@ -1,6 +1,7 @@
 using UnityEngine;
 using PetSimLite.Data;
 using PetSimLite.Zone;
+using System.Collections.Generic;
 
 namespace PetSimLite.ZoneGeneration
 {
@@ -19,6 +20,7 @@ namespace PetSimLite.ZoneGeneration
         private string _gateLabel = "UNLOCK NEXT ZONE";
         private float _nextZoneWidth;
         private float _nextZoneLength;
+        private readonly Dictionary<Color, Material> _materialCache = new Dictionary<Color, Material>();
 
         private void Awake()
         {
@@ -72,9 +74,6 @@ namespace PetSimLite.ZoneGeneration
             {
                 renderer.sharedMaterial = CreateSimpleMaterial(zoneData.FloorColor);
             }
-
-            var col = floor.GetComponent<Collider>();
-            if (col != null) col.enabled = false;
         }
 
         private void BuildWalls()
@@ -314,9 +313,35 @@ namespace PetSimLite.ZoneGeneration
 
         private Material CreateSimpleMaterial(Color color)
         {
-            var mat = new Material(Shader.Find("Standard"));
-            mat.color = color;
-            mat.SetFloat("_Glossiness", 0f);
+            if (_materialCache.TryGetValue(color, out var cached) && cached != null)
+            {
+                return cached;
+            }
+
+            Shader shader =
+                Shader.Find("Universal Render Pipeline/Lit") ??
+                Shader.Find("Universal Render Pipeline/Unlit") ??
+                Shader.Find("Standard") ??
+                Shader.Find("Unlit/Color");
+
+            if (shader == null)
+            {
+                // As a last resort, Unity will render magenta if shader is missing.
+                // Returning null here is better than creating a broken material.
+                Debug.LogError("[ZoneBuilder] Could not find a compatible shader (URP Lit/Unlit, Standard, or Unlit/Color).");
+                return null;
+            }
+
+            var mat = new Material(shader)
+            {
+                color = color
+            };
+
+            // Try to make it matte where supported.
+            if (mat.HasProperty("_Smoothness")) mat.SetFloat("_Smoothness", 0f);
+            if (mat.HasProperty("_Glossiness")) mat.SetFloat("_Glossiness", 0f);
+
+            _materialCache[color] = mat;
             return mat;
         }
     }
