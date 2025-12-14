@@ -253,7 +253,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PetSimLite.Bootstrap.GameBootstrap
   gameSettings: {fileID: 11400000, guid: d52b2801b3df11c489cf926bb73163fc, type: 2}
   zones: []
-  playerPrefab: {fileID: 5485286286526070617, guid: bfa24f061205ad54bbc4251db0deb641, type: 3}
+  playerPrefab: {fileID: 874388205373941625, guid: a29fb278547d1f4479b4813cfa788027, type: 3}
   uiCanvasPrefab: {fileID: 222146073}
 --- !u!4 &301840372
 Transform:
